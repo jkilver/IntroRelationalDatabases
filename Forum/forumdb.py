@@ -19,11 +19,10 @@ def GetAllPosts():
     '''
     DB = psycopg2.connect("dbname=forum")
     cursor = DB.cursor()
-    cursor.execute("select * from posts")
+    cursor.execute("select * from posts order by time desc")
     rows = cursor.fetchall()
     
     posts = [{'content': str(row[1]), 'time': str(row[0])} for row in rows]
-    posts.sort(key=lambda row: row['time'], reverse=True)
     
     DB.close()
     return posts
