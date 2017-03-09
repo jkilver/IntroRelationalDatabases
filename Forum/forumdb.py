@@ -20,7 +20,7 @@ def GetAllPosts():
     cursor.execute("select * from posts order by time desc")
     rows = cursor.fetchall()
     
-    posts = [{'content': str(row[1]), 'time': str(row[0])} for row in rows]
+    posts = [{'content': str(bleach.clean(str(row[1]))), 'time': str(row[0])} for row in rows]
     
     DB.close()
     return posts
