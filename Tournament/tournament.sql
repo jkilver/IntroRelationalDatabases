@@ -21,16 +21,15 @@ CREATE TABLE players (
 -- Create table for match information 
 CREATE TABLE matches (
     match_id serial PRIMARY KEY,
-    player1 integer REFERENCES players(player_id),
-    player2 integer REFERENCES players(player_id),
     winner  integer REFERENCES players(player_id),
     loser   integer REFERENCES players(player_id) );
    
 -- Create view to easily access win/loss record of players   
 CREATE VIEW playerStandings AS 
-    SELECT player_id, 
+    SELECT player_id, name, 
     (SELECT count(*) FROM matches WHERE winner = player_id) as wins,
-    (SELECT count(*) FROM matches WHERE loser = player_id) as losses
-    FROM players;
+    (SELECT count(*) FROM matches WHERE loser = player_id OR winner = player_id) as matches
+    FROM players
+    ORDER BY wins DESC;
 
 

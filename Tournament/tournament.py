@@ -3,7 +3,7 @@
 # tournament.py -- implementation of a Swiss-system tournament
 #
 
-import psycopg2
+import psycopg2 as psql
 
 
 def connect():
@@ -13,16 +13,30 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-
+    conn = psql.connect("dbname=tournament")
+    c = conn.cursor() 
+    c.execute("DELETE FROM matches") 
+    conn.commit()  
+    conn.close() 
 
 def deletePlayers():
     """Remove all the player records from the database."""
-
+    conn = psql.connect("dbname=tournament")
+    c = conn.cursor() 
+    c.execute("DELETE FROM players") 
+    conn.commit()  
+    conn.close() 
 
 def countPlayers():
     """Returns the number of players currently registered."""
-
-
+    conn = psql.connect("dbname=tournament")
+    c = conn.cursor() 
+    c.execute("SELECT count(name) from players") 
+    result = c.fetchall() 
+    #print result
+    conn.close()
+    return int(result[0][0])
+    
 def registerPlayer(name):
     """Adds a player to the tournament database.
   
@@ -32,6 +46,12 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+    name = name.replace("'", "''")    
+    conn = psql.connect("dbname=tournament")
+    c = conn.cursor() 
+    c.execute("INSERT INTO players (name) values ('" + name + "')") 
+    conn.commit()  
+    conn.close() 
 
 
 def playerStandings():
@@ -47,6 +67,12 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    conn = psql.connect("dbname=tournament")
+    c = conn.cursor() 
+    c.execute("SELECT * from playerStandings") 
+    result = c.fetchall() 
+    conn.close()
+    return result
 
 
 def reportMatch(winner, loser):
@@ -55,7 +81,12 @@ def reportMatch(winner, loser):
     Args:
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
-    """
+    """    
+    conn = psql.connect("dbname=tournament")
+    c = conn.cursor() 
+    c.execute("INSERT INTO matches (winner, loser) values (" + str(winner) + "," + str(loser) + ")") 
+    conn.commit()  
+    conn.close()
  
  
 def swissPairings():
